@@ -2,24 +2,11 @@
 #include "vec3.h"
 #include "color.h"
 #include "ray.h"
+#include "sphere.h"
+#include "hittable.h"
 
-double hit_sphere(const point3& center, double radius, const ray& r){
-    vec3 absolute_center = center - r.origin();
-    auto a = r.direction().length_squared();
-    auto h = dot(r.direction(),absolute_center);
-    auto c = absolute_center.length_squared() - radius*radius;
-    auto discriminant = h*h - a*c;
-
-    if (discriminant<0){
-        return -1.0;
-    } else {
-        return (h - std::sqrt(discriminant))/(a);
-    }
-}
-
-color ray_color(const ray& r){
-    auto t = hit_sphere(point3(0,0,-1),0.5,r);
-    
+color ray_color(const ray& r, double t){
+        
     if(t>0.0){
         vec3 N = unit_vector(r.at(t)-vec3(0,0,-1));
         return 0.5*color(N.x()+1,N.y()+1,N.z()+1);
@@ -37,6 +24,7 @@ int main() {
     int image_height = int(image_width/aspect_ratio);
     image_height = (image_height<1) ? 1 : image_height;
 
+    //camera
     auto focal_length = 1.0;
     auto viewport_height = 2.0;
     auto viewport_width = viewport_height * double(image_width)/image_height;
@@ -53,6 +41,8 @@ int main() {
 
     point3 pixel00_loc = viewport_upper_left + 0.5 * (pixel_delta_u+pixel_delta_v);
 
+    //sphere
+    sphere s = sphere(point3(0,0,-1),0.5);
     //Render
     //first three lines of file!
     std::cout<< "P3\n" << image_width << ' ' << image_height << '\n' <<"255\n";
@@ -64,10 +54,13 @@ int main() {
             point3 pixel_center = pixel00_loc + (i*pixel_delta_u)+(j*pixel_delta_v);
             vec3 ray_direction = pixel_center - camera_center;
             ray r(camera_center, ray_direction);
-
-
-            color pixel_color = ray_color(r);
+            hit_record k;
+            s.hit(r,0.0,1.0,k);
+            
+            color pixel_color = ray_color(r,k.t);
             write_color(std::cout,pixel_color);
+        
+            
         }
     }
 
