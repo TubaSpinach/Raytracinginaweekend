@@ -1,5 +1,6 @@
 #include <iostream>
 #include "vec3.h"
+#include "color.h"
 
 //generate a ppm image
 // ppm is a text based image file, very simple
@@ -21,15 +22,13 @@ int main() {
         std::clog<<"\rScanlines remaining: " << (image_height-j) << ' ' << std::flush;
 
         for(int i=0;i<image_width;i++){
-            auto r = double(i) / (image_width-1);
-            auto g = double(j) / (image_height-1);
-            auto b = 0.0;
+            auto pixel_color = color(double(i) / (image_width-1), 
+                                     double(j) / (image_height-1),
+                                     0.0);
 
-            int ir = int(255.999*r);
-            int ig = int(255.999*g);
-            int ib = int(255.999*b);
-
-            std::cout<<ir<<' '<<ig<<' '<<ib<<'\n';
+            write_color(std::cout,pixel_color);
         }
     }
+
+    std::clog<<"\rDone.                      \n";
 }
