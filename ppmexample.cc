@@ -1,6 +1,7 @@
 #include <iostream>
 #include "vec3.h"
 #include "color.h"
+#include "ray.h"
 
 //generate a ppm image
 // ppm is a text based image file, very simple
