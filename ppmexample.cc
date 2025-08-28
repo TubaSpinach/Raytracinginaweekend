@@ -12,6 +12,7 @@ int main() {
     camera Camera;
     Camera.image_width = image_width;
     Camera.aspect_ratio = aspect_ratio;
+    Camera.samples_per_pixel = 100;
 
     //world
 
